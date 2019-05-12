@@ -17,6 +17,10 @@
 - 如果 |storage_slot| 中的剩余空间不足以储存一个基本类型，那么它会被移入下一个 |storage_slot| 。
 - 结构（struct）和数组数据总是会占用一整个新插槽（但结构或数组中的各项，都会以这些规则进行打包）。
 
+For contracts that use inheritance, the ordering of state variables is determined by the C3-linearized order of contracts starting with the most base-ward contract. If allowed by the above rules, state variables from different contracts do share the same storage slot.
+
+The elements of structs and arrays are stored after each other, just as if they were given explicitly.
+
 .. warning::
     使用小于 32 字节的元素时，你的合约的 gas 使用量可能高于使用 32 字节的元素时。这是因为 |evm| 每次会操作 32 个字节，
     所以如果元素比 32 字节小，|evm| 必须使用更多的操作才能将其大小缩减到到所需的大小。
@@ -27,6 +31,12 @@
     最后，为了允许 |evm| 对此进行优化，请确保你对 |storage| 中的变量和 ``struct`` 成员的书写顺序允许它们被紧密地打包。
     例如，按照 ``uint128，uint128，uint256`` 的顺序声明你的存储变量，而不是 ``uint128，uint256，uint128``，
     因为前者只占用两个 |storage_slot|，而后者将占用三个。
+
+Note
+
+The layout of state variables in storage is considered to be part of the external interface of Solidity due to the fact that storage pointers can be passed to libraries. This means that any change to the rules outlined in this section is considered a breaking change of the language and due to its critical nature should be considered very carefully before being executed.
+
+Mappings 和动态数组
 
 结构和数组中的元素都是顺序存储的，就像它们被明确给定的那样。
 
@@ -83,6 +93,9 @@ Solidity 总会把新对象保存在空闲 |memory| 指针的位置，所以这�
 
 当从一个账户调用已部署的 Solidity 合约时，调用数据的格式被认为会遵循 :ref:`ABI 说明<ABI>`。
 根据 ABI 说明的规定，参数需要被整理为 32 字节的倍数。而内部函数调用会使用不同规则。
+
+Arguments for the constructor of a contract are directly appended at the end of the contract's code, also in ABI encoding. The constructor will access them through a hard-coded offset, and not by using the codesize opcode, since this of course changes when appending data to the code.
+
 
 .. index:: variable cleanup
 
@@ -272,7 +285,7 @@ AST 内的源代码映射使用以下表示法：
 
 全局变量
 ================
-
+- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`-decodes the provided data. The types are given in parentheses as second argument. Example: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))
 - ``abi.encode(...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码
 - ``abi.encodePacked(...) returns (bytes)``：对给定参数执行 :ref:`紧打包编码 <abi_packed_mode>`
 - ``abi.encodeWithSelector(bytes4 selector, ...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码，并以给定的函数选择器作为起始的 4 字节数据一起返回
@@ -322,6 +335,10 @@ AST 内的源代码映射使用以下表示法：
 .. note::
     出于扩展性的原因，你无法取得所有区块的哈希。只有最新的 256 个区块的哈希可以拿到，其他的都将为 0。
 
+.. note::
+
+In version 0.5.0, the following aliases were removed: suicide as alias for selfdestruct, msg.gas as alias for gasleft, block.blockhash as alias for blockhash and sha3 as alias for keccak256.
+
 .. index:: visibility, public, private, external, internal
 
 函数可见性说明符
@@ -347,7 +364,6 @@ AST 内的源代码映射使用以下表示法：
 - ``view`` 修饰函数时：不允许修改状态——但目前不是强制的。
 - ``payable`` 修饰函数时：允许从调用中接收 |ether| 。
 - ``constant`` 修饰状态变量时：不允许赋值（除初始化以外），不会占据 |storage_slot| 。
-- ``constant`` 修饰函数时：与 ``view`` 等价。
 - ``anonymous`` 修饰事件时：不把事件签名作为 topic 存储。
 - ``indexed`` 修饰事件时：将参数作为 topic 存储。
 
