@@ -285,7 +285,7 @@ AST 内的源代码映射使用以下表示法：
 
 全局变量
 ================
-- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`-decodes the provided data. The types are given in parentheses as second argument. Example: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))
+- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`-decodes the provided data. The types are given in parentheses as second argument. Example: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))``
 - ``abi.encode(...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码
 - ``abi.encodePacked(...) returns (bytes)``：对给定参数执行 :ref:`紧打包编码 <abi_packed_mode>`
 - ``abi.encodeWithSelector(bytes4 selector, ...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码，并以给定的函数选择器作为起始的 4 字节数据一起返回
@@ -311,7 +311,6 @@ AST 内的源代码映射使用以下表示法：
 - ``revert(string message)``：中止执行并回复所有状态变更，可以同时提供错误消息
 - ``blockhash(uint blockNumber) returns (bytes32)``：指定区块的区块哈希——仅可用于最新的 256 个区块
 - ``keccak256(...) returns (bytes32)``：计算 :ref:`紧打包编码 <abi_packed_mode>` 的 Ethereum-SHA-3（Keccak-256）哈希
-- ``sha3(...) returns (bytes32)``：等价于 ``keccak256``
 - ``sha256(...) returns (bytes32)``：计算 :ref:`紧打包编码 <abi_packed_mode>` 的 SHA-256 哈希
 - ``ripemd160(...) returns (bytes20)``：计算 :ref:`紧打包编码 <abi_packed_mode>` 的 RIPEMD-160 哈希
 - ``ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) returns (address)``：基于椭圆曲线签名找回与指定公钥关联的地址，发生错误的时候返回 0
@@ -320,11 +319,13 @@ AST 内的源代码映射使用以下表示法：
 - ``this`` （类型为当前合约的变量）：当前合约实例，可以准确地转换为 ``address``
 - ``super``：当前合约的上一级继承关系的合约
 - ``selfdestruct(address recipient)``：销毁当前合约，把余额发送到给定地址
-- ``suicide(address recipient)``：与 ``selfdestruct`` 等价，但已不推荐使用
 - ``<address>.balance`` （``uint256``）： :ref:`address` 的余额，以 Wei 为单位
-- ``<address>.send(uint256 amount) returns (bool)``：向 :ref:`address` 发送给定数量的 Wei，失败时返回 ``false``
-- ``<address>.transfer(uint256 amount)``：向 :ref:`address` 发送给定数量的 Wei，失败时会把错误抛出（throw）
-
+- ``<address payable>.send(uint256 amount) returns (bool)``：向 :ref:`address` 发送给定数量的 Wei，失败时返回 ``false``
+- ``<address payable>.transfer(uint256 amount)``：向 :ref:`address` 发送给定数量的 Wei，失败时会把错误抛出（throw）
+- ``type(C).name (string)``: the name of the contract
+- ``type(C).creationCode (bytes memory)``: creation bytecode of the given contract, see :ref:`Type Information<meta-type>`.
+- ``type(C).runtimeCode (bytes memory)``: runtime bytecode of the given contract, see :ref:`Type Information<meta-type>`.
+    
 .. note::
     不要用 ``block.timestamp``、``now`` 或者 ``blockhash`` 作为随机种子，除非你明确知道你在做什么。
 
