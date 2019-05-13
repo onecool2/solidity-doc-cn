@@ -285,7 +285,7 @@ AST 内的源代码映射使用以下表示法：
 
 全局变量
 ================
-- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`- 对提供的数据进行解码. 第二个参数作为它的类型传入，并且要用小括号扩起来。 例如: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))``
+- ``abi.decode(bytes memory encodedData, (...)) returns (...):`` :ref:`ABI <ABI>`- 对提供的数据进行解码. 第二个参数作为它的类型传入，并且要用小括号扩起来。 例如: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))
 - ``abi.encode(...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码
 - ``abi.encodePacked(...) returns (bytes)``：对给定参数执行 :ref:`紧打包编码 <abi_packed_mode>`
 - ``abi.encodeWithSelector(bytes4 selector, ...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码，并以给定的函数选择器作为起始的 4 字节数据一起返回
