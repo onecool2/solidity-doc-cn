@@ -19,7 +19,7 @@
 
 For contracts that use inheritance, the ordering of state variables is determined by the C3-linearized order of contracts starting with the most base-ward contract. If allowed by the above rules, state variables from different contracts do share the same storage slot.
 
-The elements of structs and arrays are stored after each other, just as if they were given explicitly.
+结构体和数组中的成员变量会存储在一起，就像它们在显式声明中的一样。
 
 .. warning::
     使用小于 32 字节的元素时，你的合约的 gas 使用量可能高于使用 32 字节的元素时。这是因为 |evm| 每次会操作 32 个字节，
@@ -32,9 +32,9 @@ The elements of structs and arrays are stored after each other, just as if they 
     例如，按照 ``uint128，uint128，uint256`` 的顺序声明你的存储变量，而不是 ``uint128，uint256，uint128``，
     因为前者只占用两个 |storage_slot|，而后者将占用三个。
 
-Note
+.. Note::
 
-The layout of state variables in storage is considered to be part of the external interface of Solidity due to the fact that storage pointers can be passed to libraries. This means that any change to the rules outlined in this section is considered a breaking change of the language and due to its critical nature should be considered very carefully before being executed.
+由于|storage|中的指针可以传递给|library|，所以|storage|中状态变量的布局被认为是solidity外部接口的一部分。这意味着，本节所述规则的任何变更均被视为语言的重大变更，由于其关键性，请在执行前应仔细考虑。
 
 Mappings 和动态数组
 
@@ -94,7 +94,7 @@ Solidity 总会把新对象保存在空闲 |memory| 指针的位置，所以这�
 当从一个账户调用已部署的 Solidity 合约时，调用数据的格式被认为会遵循 :ref:`ABI 说明<ABI>`。
 根据 ABI 说明的规定，参数需要被整理为 32 字节的倍数。而内部函数调用会使用不同规则。
 
-Arguments for the constructor of a contract are directly appended at the end of the contract's code, also in ABI encoding. The constructor will access them through a hard-coded offset, and not by using the codesize opcode, since this of course changes when appending data to the code.
+合约中构造函数的参数直接追加在合约代码的末尾，也使用ABI编码。构造器将通过硬编码的偏移量访问它们，而不是使用``codeSize``操作码，因为如果把数据插入到代码中间，会让代码发生改变。
 
 
 .. index:: variable cleanup
@@ -285,7 +285,7 @@ AST 内的源代码映射使用以下表示法：
 
 全局变量
 ================
-- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`-decodes the provided data. The types are given in parentheses as second argument. Example: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))``
+- ``abi.decode(bytes memory encodedData, (...)) returns (...): :ref:`ABI <ABI>`- 对提供的数据进行解码. 第二个参数作为它的类型传入，并且要用小括号扩起来。 例如: (uint a, uint[2] memory b, bytes memory c) = abi.decode(data, (uint, uint[2], bytes))``
 - ``abi.encode(...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码
 - ``abi.encodePacked(...) returns (bytes)``：对给定参数执行 :ref:`紧打包编码 <abi_packed_mode>`
 - ``abi.encodeWithSelector(bytes4 selector, ...) returns (bytes)``： :ref:`ABI <ABI>` - 对给定参数进行编码，并以给定的函数选择器作为起始的 4 字节数据一起返回
@@ -338,7 +338,7 @@ AST 内的源代码映射使用以下表示法：
 
 .. note::
 
-In version 0.5.0, the following aliases were removed: suicide as alias for selfdestruct, msg.gas as alias for gasleft, block.blockhash as alias for blockhash and sha3 as alias for keccak256.
+在0.5.0中, 下面关键字被去除了: ``suicide`` 被 ``selfdestruct`` 代替, ``msg.gas`` 被 ``gasleft`` 代替, ``block.blockhash`` 被 ``blockhash`` 代替， ``sha3 被 ``keccak256``代替.
 
 .. index:: visibility, public, private, external, internal
 
