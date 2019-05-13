@@ -322,9 +322,9 @@ AST 内的源代码映射使用以下表示法：
 - ``<address>.balance`` （``uint256``）： :ref:`address` 的余额，以 Wei 为单位
 - ``<address payable>.send(uint256 amount) returns (bool)``：向 :ref:`address` 发送给定数量的 Wei，失败时返回 ``false``
 - ``<address payable>.transfer(uint256 amount)``：向 :ref:`address` 发送给定数量的 Wei，失败时会把错误抛出（throw）
-- ``type(C).name (string)``: the name of the contract
-- ``type(C).creationCode (bytes memory)``: creation bytecode of the given contract, see :ref:`Type Information<meta-type>`.
-- ``type(C).runtimeCode (bytes memory)``: runtime bytecode of the given contract, see :ref:`Type Information<meta-type>`.
+- ``type(C).name (string)``: 智能合约的名字
+- ``type(C).creationCode (bytes memory)``: 合约的创建字节码, see :ref:`Type Information<meta-type>`.
+- ``type(C).runtimeCode (bytes memory)``: 合约的运行字节码, see :ref:`Type Information<meta-type>`.
     
 .. note::
     不要用 ``block.timestamp``、``now`` 或者 ``blockhash`` 作为随机种子，除非你明确知道你在做什么。
